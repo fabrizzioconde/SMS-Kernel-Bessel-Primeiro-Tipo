@@ -1,0 +1,17 @@
+[project]
+name = "sms-kernel-bessel"
+version = "0.1.0"
+description = "SMS com kernel de Bessel (primeiro tipo) — scripts R; ambiente Python gerenciado por uv para dependências e reprodutibilidade."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "radian>=0.6.13",
+]
+
+[dependency-groups]
+dev = [
+    "ipython>=8.18.0",
+]
+
+[tool.uv]
+package = false
