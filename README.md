@@ -1,7 +1,5 @@
 # SMS com kernel de Bessel (primeiro tipo)
 
-**Repositório:** [github.com/fabrizzioconde/SMS-Kernel-Bessel](https://github.com/fabrizzioconde/SMS-Kernel-Bessel)
-
 Repositório de scripts em **R** para o método **SMS** (*Selection of Markers by Support vector machine*, seleção de marcadores com máquina de vetores de suporte em modo regressão — SVR), comparando kernels do SVR em dados **simulados** de genótipo e fenótipo (SNPs): **linear** e **radial (RBF / gaussiano)** via `e1071::svm`, e **várias configurações do kernel de Bessel** via `kernlab` (`besseldot`).
 
 ---
@@ -18,20 +16,22 @@ O fluxo combina **importância da Random Forest**, **corte guiado pelo MSE do SV
 
 ### Nota sobre o que está nos scripts `.R` desta pasta
 
-A função `validacao_cruzada` está documentada no código como implementação para **kernel radial e linear** (`e1071`). Nos arquivos `SMS_Completo_Corr_*_Bessel_grupo_*.R` versionados aqui, o primeiro bloco do SMS (`i = 1`) está parametrizado com **`kernel = "linear"`** (corte, GA e saídas como `SMS Linear`). Para **reproduzir ou manter** também o ramo **radial** na mesma pipeline (corte + GA + `sink`), basta repetir esse bloco trocando para `kernel = "radial"` e definindo `gamma` (no código já existem valores de `gamma` em outros trechos, p.ex. na validação só com SNPs causais, que podem servir de ponto de partida).
+A função `validacao_cruzada` está documentada no código como implementação para **kernel radial e linear** (`e1071`). Nos arquivos `r/grupo_*/SMS_Completo_Corr_*_grupo_*/SMS_Completo_Corr_*_Bessel_grupo_*.R`, o primeiro bloco do SMS (`i = 1`) está parametrizado com **`kernel = "linear"`** (corte, GA e saídas como `SMS Linear`). Para **reproduzir ou manter** também o ramo **radial** na mesma pipeline (corte + GA + `sink`), basta repetir esse bloco trocando para `kernel = "radial"` e definindo `gamma` (no código já existem valores de `gamma` em outros trechos, p.ex. na validação só com SNPs causais, que podem servir de ponto de partida).
 
 ---
 
-## Estrutura de pastas
+## Estrutura do repositório
 
 | Caminho | Conteúdo |
 |---------|----------|
-| `GRUPO 1/`, `GRUPO 2/`, `GRUPO 3/` | Três **réplicas** independentes da mesma lógica experimental (mesmos tipos de cenário `Corr_1` … `Corr_6`, com scripts espelhados por grupo). |
-| `SMS_Completo_Corr_N_grupo_G/` | Um **cenário de simulação** `N` (1–6) para o grupo `G` (1–3). |
+| `docs/thesis/` | **TCC** em PDF (`TCC_Diogo_Moura_Ferreira.pdf`) — trabalho de conclusão associado ao projeto. |
+| `r/grupo_1/`, `r/grupo_2/`, `r/grupo_3/` | Três **réplicas** experimentais; em cada uma, subpastas `SMS_Completo_Corr_N_grupo_G/` por cenário. |
+| `SMS_Completo_Corr_N_grupo_G/` (dentro de `r/grupo_G/`) | Um **cenário de simulação** `N` (1–6): scripts `.R`, saídas `.txt`, PDFs de diagnóstico e objetos `.RData`. |
+| `pyproject.toml`, `uv.lock` | Projeto **Python** gerenciado por [uv](https://github.com/astral-sh/uv) (ambiente virtual e dependências; ver secção abaixo). |
 
 Em cada pasta de cenário você encontra, em geral:
 
-- **`SMS_Completo_Corr_N_Bessel_grupo_G.R`** — script principal: simulação, SMS completo, saídas e gráficos.
+- **`SMS_Completo_Corr_N_Bessel_grupo_G.R`** — script principal: simulação, SMS completo, saídas e gráficos (em `r/grupo_G/SMS_Completo_Corr_N_grupo_G/`).
 - **`SNPs_corte_selecionados_Corr_N_grupo_G.R`** (quando existir) — utilitário que cruza SNPs selecionados na **etapa de corte** (`snps_selec_corte`) com a lista de SNPs **causais** definida no cenário.
 - **`SimulacaoN.RData`**, **`SMS_corr_N.RData`** — objetos R salvos após execução.
 - **PDFs**: histograma e boxplot do fenótipo; MSE do SVR vs. número de marcadores; evolução do GA (ggplot2).
@@ -56,6 +56,29 @@ Todos usam `scrime::simulateSNPglm` para gerar genótipo e fenótipo. Os **cená
 | **Corr_6** | 250 | 1000 | Painel maior, sete causais nas posições 1, 10, …, 60; efeitos majoritariamente aditivos; `beta0=0`, um efeito maior (`900` no 4.º causal). |
 
 Detalhes exatos estão nos comentários e parâmetros no início de cada `SMS_Completo_Corr_N_Bessel_grupo_G.R`.
+
+---
+
+## Ambiente virtual Python (uv)
+
+O núcleo da análise é **R**; o **Python** com [uv](https://docs.astral.sh/uv/) fornece um console R moderno (**radian**) e **IPython** para tarefas auxiliares.
+
+**Requisitos:** Python 3.11+ e [uv](https://docs.astral.sh/uv/getting-started/installation/) instalado (ou `python -m pip install uv`).
+
+```bash
+cd /caminho/para/SMS-Kernel-Bessel
+uv sync --all-groups    # cria .venv e instala radian + ipython (grupo dev)
+```
+
+Ativar o ambiente e abrir o R via radian (com R instalado no sistema):
+
+```bash
+# Windows (cmd): .venv\Scripts\activate
+# Git Bash: source .venv/Scripts/activate
+radian
+```
+
+Dependências principais: `radian` (runtime); `ipython` (grupo `dev`, opcional).
 
 ---
 
@@ -102,32 +125,10 @@ Define `selecionar_snp_causais(selected_snps, causal_snps)` e, em loop para `i` 
 
 ---
 
-## Ambiente virtual Python (`uv`)
-
-O núcleo do projeto é **R**; o [uv](https://github.com/astral-sh/uv) mantém um **venv** e o ficheiro `uv.lock` para dependências Python auxiliares (reprodutíveis).
-
-- **Criar/atualizar o ambiente** (na raiz do repositório):
-
-  ```bash
-  uv sync --all-groups
-  ```
-
-  Ou, se `uv` não estiver no `PATH`: `python -m uv sync --all-groups`
-
-- **Ativar** (Windows): `.venv\Scripts\activate` — (Linux/macOS): `source .venv/bin/activate`
-
-- **Dependências principais** (`pyproject.toml`): `radian` (consola R melhorada; requer R instalado no sistema).
-
-- **Grupo `dev`**: `ipython` (exploração interativa). Instalado com `uv sync --all-groups`.
-
-Os pacotes **R** (`scrime`, `e1071`, `kernlab`, etc.) continuam a ser instalados via `install.packages()` nos scripts, conforme o README abaixo.
-
----
-
 ## Como executar
 
 1. Instalar [R](https://www.r-project.org/) e, de preferência, [RStudio](https://posit.co/download/rstudio-desktop/).
-2. Abrir o arquivo `SMS_Completo_Corr_N_Bessel_grupo_G.R` correspondente ao cenário e ao grupo desejados.
+2. Abrir o arquivo `r/grupo_G/SMS_Completo_Corr_N_grupo_G/SMS_Completo_Corr_N_Bessel_grupo_G.R` correspondente ao cenário e ao grupo desejados.
 3. Executar o script completo (pode levar bastante tempo por causa da RF, dos loops de SVR e do GA com `parallel=TRUE`).
 4. Conferir PDFs e arquivos `.txt` na **mesma pasta** do script.
 

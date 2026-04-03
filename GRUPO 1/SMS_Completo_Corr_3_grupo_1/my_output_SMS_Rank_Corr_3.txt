@@ -1,3 +1,0 @@
-Seleção valor-p bruto = SNP9 SNP10 SNP7 SNP3 SNP60 SNP6 SNP82 SNP40 
-Seleção valor-p corrigido = SNP9 
-Seleção rank da Random Forest

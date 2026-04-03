@@ -1,29 +1,23 @@
-# Ambiente virtual Python (uv)
+# Python / uv
 .venv/
-venv/
-env/
-
-# Python
 __pycache__/
 *.py[cod]
+.Python
 *.egg-info/
 .eggs/
 dist/
 build/
 
-# uv (cache local opcional)
-# .uv/
+# R (local)
+.Rhistory
+.RDataTmp
+*.Rproj.user/
 
-# R / IDE (opcional — descomente se não quiser versionar)
-# .Rhistory
-# *.RData
-# .Rproj.user/
+# IDEs
+.idea/
+.vscode/
+*.swp
 
-# Documento académico externo aos scripts (evitar publicação acidental no GitHub)
-*Diogo*.pdf
-
-# SO / editor
+# OS
 .DS_Store
 Thumbs.db
-*.swp
-.idea/
