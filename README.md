@@ -1,6 +1,6 @@
 # SMS com kernel de Bessel (primeiro tipo)
 
-**GitHub:** [fabrizzioconde/SMS-Kernel-Bessel](https://github.com/fabrizzioconde/SMS-Kernel-Bessel)
+**GitHub:** [fabrizzioconde/SMS-Kernel-Bessel-Primeiro-Tipo](https://github.com/fabrizzioconde/SMS-Kernel-Bessel-Primeiro-Tipo)
 
 Repositório de scripts em **R** para o método **SMS** (*Selection of Markers by Support vector machine*, seleção de marcadores com máquina de vetores de suporte em modo regressão — SVR), comparando kernels do SVR em dados **simulados** de genótipo e fenótipo (SNPs): **linear** e **radial (RBF / gaussiano)** via `e1071::svm`, e **várias configurações do kernel de Bessel** via `kernlab` (`besseldot`).
 
